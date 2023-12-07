@@ -1,8 +1,7 @@
 <template>
 
   <div id="burger-table" v-if="burgers">
-    <Messagem :msg="msg" v-show="msg" />
-
+    <Messagem v-model:msg.sync="msg" v-show="msg" />
     <h2>Pedidos:</h2>
     <div>
       <div id="burger-table-heading">
@@ -85,9 +84,6 @@
       const res = await req.json();
       this.getPedidos();
       this.msg = `Pedido Nº ${id} está ${option}`;
-      setTimeout(() => {
-        this.msg = '';
-      }, 3000);
     },
 
     async deleteBurger(id) {
@@ -97,9 +93,6 @@
       const data = await req.json();
       this.getPedidos();
       this.msg = `Pedido Nº ${id} cancelado com sucesso!`;
-      setTimeout(() => {
-        this.msg = '';
-      }, 3000);
     }
   },
   mounted() {

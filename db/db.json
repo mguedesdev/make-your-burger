@@ -78,38 +78,7 @@
     }
   ],
   "burgers": [
-    {
-      "nome": "matheus guedes ribeiro",
-      "pao": "3 Queijos",
-      "carne": "Alcatra",
-      "opcionais": [
-        "Cebola roxa"
-      ],
-      "status": "Em produção",
-      "id": 1
-    },
-    {
-      "nome": "matheus guedes ribeiro",
-      "pao": "Parmesão e Orégano",
-      "carne": "Maminha",
-      "opcionais": [
-        "Tomate",
-        "Cheddar"
-      ],
-      "status": "Finalizado",
-      "id": 3
-    },
-    {
-      "nome": "matheus guedes ribeiro",
-      "pao": "Parmesão e Orégano",
-      "carne": "Maminha",
-      "opcionais": [
-        "Pepino",
-        "Tomate",
-        "Cheddar"
-      ],
-      "status": "Em produção",
-      "id": 4
-    }
+    
+    
   ]
 }

@@ -12,6 +12,20 @@
         type: String,
         required: true
       }
+    },
+    methods: {
+      closeMessage() {
+        this.$emit('update:msg', '');
+      }
+    },
+    watch: {
+      msg(newMsg) {
+        if (newMsg) {
+          setTimeout(() => {
+            this.closeMessage();
+          }, 3000);
+        }
+      }
     }
   }
 </script>
