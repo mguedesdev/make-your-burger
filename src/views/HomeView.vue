@@ -9,6 +9,7 @@
 <script>
   import Banner from '../components/Banner.vue';
   import BurgerForm from '../components/BurgerForm.vue';
+
   export default {
     name: 'HomeView',
     components: {

@@ -14,13 +14,15 @@
 <style scoped>
   .main-banner {
     height: 500px;
+    width: calc(100% + 100px);
     display: flex;
     align-items: center;
     justify-content: flex-start;
     position: relative;
     overflow: hidden;
-    transform: scale(1.1);
-    margin-bottom: 40px;
+    margin-left: -50px;
+    margin-top: -20px;
+    margin-bottom: 50px;
   }
 
   .main-banner:hover > .banner-image {
@@ -36,10 +38,8 @@
     transform: scale(1.2);
     transition: 0.3s;
     z-index: 2; 
-    margin-left: 90px;
+    margin-left: 50px;
     transition: 0.5s;
-
-
   }
 
   .banner-image {
@@ -56,7 +56,6 @@
     color: #FFF;
     font-size: 60px;
     margin: 0;
-    margin-left: 20px;
     padding: 20px 40px;
     background-color: rgba(34, 34, 34); 
     z-index: 1; 
