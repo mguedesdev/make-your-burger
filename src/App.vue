@@ -37,7 +37,8 @@
 
   .main-container {
     margin: 50px;
-    min-height: 72vh;
+    margin-top: 0px;
+    min-height: 78vh;
   }
 
   h1 {
