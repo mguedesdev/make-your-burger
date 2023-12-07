@@ -37,7 +37,7 @@
 </template>
 
 <script>
-  import Messagem from './Message.vue';
+  import Messagem from '../Message.vue';
   export default {
     name: 'BurgerForm',
     data() {

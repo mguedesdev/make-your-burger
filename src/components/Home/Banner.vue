@@ -22,7 +22,7 @@
     overflow: hidden;
     margin-left: -50px;
     margin-top: -20px;
-    margin-bottom: 50px;
+    margin-bottom: 20px;
   }
 
   .main-banner:hover > .banner-image {

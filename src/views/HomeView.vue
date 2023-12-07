@@ -7,8 +7,8 @@
 </template>
 
 <script>
-  import Banner from '../components/Banner.vue';
-  import BurgerForm from '../components/BurgerForm.vue';
+  import Banner from '../components/Home/Banner.vue';
+  import BurgerForm from '../components/Home/BurgerForm.vue';
 
   export default {
     name: 'HomeView',

@@ -1,5 +1,20 @@
 <template>
   <div class="main-container">
-    <h1>PEDIDOS</h1>
+    <DashboardVue />
+
   </div>
 </template>
+
+<script>
+  import DashboardVue from "@/components/Pedidos/Dashboard.vue";
+  export default {
+    name: 'PedidosView',
+    components: {
+      DashboardVue
+    }
+  }
+</script>
+
+<style scoped>
+
+</style>
