@@ -1,5 +1,9 @@
 <template>
+
   <div id="burger-table" v-if="burgers">
+    <Messagem :msg="msg" v-show="msg" />
+
+    <h2>Pedidos:</h2>
     <div>
       <div id="burger-table-heading">
         <div class="order-id">#:</div>
@@ -40,15 +44,19 @@
 </template>
 
 <script>
-export default {
+  import Messagem from '../Message.vue';
+  export default {
   name: 'PedidosView',
   data() {
     return {
       burgers: null,
       burger_id: null,
       status: [],
+      msg: ''
     }
-    
+  },
+  components: {
+    Messagem,
   },
   methods: {
     async getPedidos() {
@@ -75,6 +83,11 @@ export default {
         body: dataJson
       })
       const res = await req.json();
+      this.getPedidos();
+      this.msg = `Pedido Nº ${id} está ${option}`;
+      setTimeout(() => {
+        this.msg = '';
+      }, 3000);
     },
 
     async deleteBurger(id) {
@@ -83,6 +96,10 @@ export default {
       });
       const data = await req.json();
       this.getPedidos();
+      this.msg = `Pedido Nº ${id} cancelado com sucesso!`;
+      setTimeout(() => {
+        this.msg = '';
+      }, 3000);
     }
   },
   mounted() {

@@ -89,17 +89,6 @@
       "id": 1
     },
     {
-      "nome": "",
-      "pao": "Italiano Branco",
-      "carne": "Veggie burger",
-      "opcionais": [
-        "Salame",
-        "Bacon"
-      ],
-      "status": "Solicitado",
-      "id": 2
-    },
-    {
       "nome": "matheus guedes ribeiro",
       "pao": "Parmesão e Orégano",
       "carne": "Maminha",
@@ -109,6 +98,18 @@
       ],
       "status": "Finalizado",
       "id": 3
+    },
+    {
+      "nome": "matheus guedes ribeiro",
+      "pao": "Parmesão e Orégano",
+      "carne": "Maminha",
+      "opcionais": [
+        "Pepino",
+        "Tomate",
+        "Cheddar"
+      ],
+      "status": "Em produção",
+      "id": 4
     }
   ]
 }
