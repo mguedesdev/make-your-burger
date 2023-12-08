@@ -40,7 +40,7 @@
   import Messagem from '../Message.vue';
 
   import { db } from '@/firebase'; // Ajuste o caminho para a sua instância do Firestore
-  import { collection, getDocs, query, where } from 'firebase/firestore';
+  import { collection, getDocs, addDoc } from 'firebase/firestore';
 
   export default {
     name: 'BurgerForm',
@@ -82,34 +82,36 @@
 
       async createBurger(e) {
         e.preventDefault();
-        const data = {
+        const burgersCollectionRef = collection(db, "burgers"); // Referência à coleção de burgers no Firestore
+        const burgersList = await getDocs(burgersCollectionRef); // Busca todos os documentos da coleção burgers
+        const burgers = burgersList.docs.map(doc => doc.data()); // Mapeia os documentos para um array de objetos
+        console.log(burgers);
+
+        const burgerData = {
+          id: burgers.length + 1,
           nome: this.nome,
           pao: this.pao,
           carne: this.carne,
-          opcionais: Array.from(this.opcionais),
+          opcionais: this.opcionais,
           status: 'solicitado'
+        };
+        console.log(burgerData);
+
+        try {
+          const docRef = await addDoc(burgersCollectionRef, burgerData);
+          this.msg = `Pedido realizado com sucesso!`;
+          this.nome = '';
+          this.pao = '';
+          this.carne = '';
+          this.opcionais = [];
+
+        } catch (error) {
+          console.error("Erro ao criar o pedido: ", error);
+          this.msg = "Erro ao realizar pedido. Tente novamente.";
         }
-        const dataJson = JSON.stringify(data);
-        const req = await fetch('http://localhost:3000/burgers', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: dataJson
-        });
-
-        const res = await req.json();
-        this.msg = `Pedido Nº ${res.id} realizado com sucesso!`;
-
-        this.nome = '';
-        this.pao = '';
-        this.carne = '';
-        this.opcionais = [];
-
-      }
+      },
     },
     mounted() {
-      // this.getIngredientes();
       this.buscarTodosOsIngredientes();
     }
   }

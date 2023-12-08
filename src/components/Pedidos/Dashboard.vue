@@ -1,6 +1,6 @@
 <template>
 
-  <div id="burger-table" v-if="burgers">
+  <div id="burger-table" v-if="burgers.length > 0">
     <Messagem v-model:msg.sync="msg" v-show="msg" />
     <h2>Pedidos:</h2>
     <div>
@@ -27,12 +27,12 @@
           </ul>
         </div>
         <div>
-          <select name="status" class="status" @change="updateBurger($event, burger.id)">
-            <option :value="s.tipo" v-for="s in status" :key="s.id" :selected="burger.status == s.tipo">
-              {{ s.tipo }}
+          <select name="status" class="status" @change="updateBurger($event, burger.firestoreId)">
+            <option v-for="s in status" :key="s.id" :value="s.Tipo" :selected="burger.status == s.Tipo">
+              {{ s.Tipo }}
             </option>
           </select>
-          <button class="delete-btn" @click="deleteBurger(burger.id)">Cancelar</button>
+          <button class="delete-btn" @click="deleteBurger(burger.firestoreId)">Cancelar</button>
         </div>
       </div>
     </div>
@@ -43,12 +43,21 @@
 </template>
 
 <script>
+  import { db } from '@/firebase'; 
+  import {
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  deleteDoc
+} from 'firebase/firestore';
+
   import Messagem from '../Message.vue';
   export default {
   name: 'PedidosView',
   data() {
     return {
-      burgers: null,
+      burgers: [],
       burger_id: null,
       status: [],
       msg: ''
@@ -59,41 +68,52 @@
   },
   methods: {
     async getPedidos() {
-      const req = await fetch('http://localhost:3000/burgers');
-      const data = await req.json();
-      this.burgers = data;
-    },
-    async getStatus() {
-      const req = await fetch('http://localhost:3000/status');
-      const data = await req.json();
-      this.status = data;
-    },
-    
-    async updateBurger(event, id) {
-      const option = event.target.value;
-
-      const dataJson = JSON.stringify({ status: option });
-
-      const req = await fetch(`http://localhost:3000/burgers/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: dataJson
-      })
-      const res = await req.json();
-      this.getPedidos();
-      this.msg = `Pedido Nº ${id} está ${option}`;
-    },
-
-    async deleteBurger(id) {
-      const req = await fetch(`http://localhost:3000/burgers/${id}`, {
-        method: 'DELETE'
+      const burgersCollectionRef = collection(db, "burgers");
+      const burgersList = await getDocs(burgersCollectionRef);
+      this.burgers = burgersList.docs.map(doc => {
+        return {
+          firestoreId: doc.id, // Armazenar o ID do documento do Firestore
+          ...doc.data() // Obter os dados do documento
+        };
       });
-      const data = await req.json();
-      this.getPedidos();
-      this.msg = `Pedido Nº ${id} cancelado com sucesso!`;
+      console.log(this.burgers.length);
+    },
+
+    async getStatus() {
+      const statusCollectionRef = collection(db, "status");
+      const statusList = await getDocs(statusCollectionRef);
+      this.status = statusList.docs.map(doc => doc.data());
+    },
+
+    async updateBurger(event, firestoreId) {
+      const newStatus = event.target.value;
+      const burgerRef = doc(db, "burgers", firestoreId);
+
+      try {
+        await updateDoc(burgerRef, {
+          status: newStatus 
+        });
+        this.getPedidos(); 
+        this.msg = `Pedido está ${newStatus}`; 
+      } catch (error) {
+        console.error("Erro ao atualizar o pedido: ", error);
+        this.msg = "Erro ao atualizar pedido. Tente novamente.";
+      }
+    },
+
+    async deleteBurger(firestoreId) {
+      const burgerRef = doc(db, "burgers", firestoreId); 
+
+      try {
+        await deleteDoc(burgerRef);
+        this.getPedidos(); 
+        this.msg = `Pedido cancelado com sucesso!`; 
+      } catch (error) {
+        console.error("Erro ao deletar o pedido: ", error);
+        this.msg = "Erro ao cancelar pedido. Tente novamente.";
+      }
     }
+    
   },
   mounted() {
     this.getPedidos();
