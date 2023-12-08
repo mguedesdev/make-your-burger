@@ -38,6 +38,10 @@
 
 <script>
   import Messagem from '../Message.vue';
+
+  import { db } from '@/firebase'; // Ajuste o caminho para a sua instância do Firestore
+  import { collection, getDocs, query, where } from 'firebase/firestore';
+
   export default {
     name: 'BurgerForm',
     data() {
@@ -56,13 +60,26 @@
       Messagem,
     },  
     methods: {
-      async getIngredientes() {
-        const response = await fetch('http://localhost:3000/ingredientes');
-        const data = await response.json();
-        this.paes = data.paes;
-        this.carnes = data.carnes;
-        this.opcionaisdata = data.opcionais;
+
+      async buscarTodosOsIngredientes() {
+        const categorias = ['carnes', 'paes', 'opcionais'];
+
+        for (const categoria of categorias) {
+          const tiposRef = collection(db, `ingredientes/${categoria}/tipos`);
+          const tiposSnapshot = await getDocs(tiposRef);
+
+          const tipos = tiposSnapshot.docs.map(doc => (doc.data()));
+
+          if (categoria === 'carnes') {
+            this.carnes = tipos;
+          } else if (categoria === 'paes') {
+            this.paes = tipos;
+          } else if (categoria === 'opcionais') {
+            this.opcionaisdata = tipos;
+          }
+        }
       },
+
       async createBurger(e) {
         e.preventDefault();
         const data = {
@@ -92,8 +109,8 @@
       }
     },
     mounted() {
-      this.getIngredientes();
-      
+      // this.getIngredientes();
+      this.buscarTodosOsIngredientes();
     }
   }
 </script>
