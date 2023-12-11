@@ -1,14 +1,16 @@
 <template>
-  <div>
-    <Navbar :logo="logo_src" :alt="app_name"/>
+  <div class="app-container">
+    <Navbar v-if="showNavbarAndFooter" :logo="logo_src" :alt="app_name"/>
     <router-view/>
-    <Footer/>
+    <Footer v-if="showNavbarAndFooter"/>
   </div>
 </template>
 
 <script>
   import Navbar from './components/Navbar.vue';
   import Footer from './components/Footer.vue';
+  import { watch, ref } from 'vue';
+  import { useRoute } from 'vue-router';
 
   export default {
     name: 'App',
@@ -21,10 +23,20 @@
         logo_src : "img/logo.png",
         app_name : 'Make Your Burger'
       }
+    },
+    setup() {
+      const route = useRoute();
+      const showNavbarAndFooter = ref(true);
+
+      watch(() => route.path, (newPath) => {
+        showNavbarAndFooter.value = newPath !== '/login';
+      }, { immediate: true });
+
+      return { showNavbarAndFooter };
     }
   }
-  
 </script>
+
 
 
 <style>
@@ -33,6 +45,10 @@
     padding: 0;
     box-sizing: border-box;
     font-family: Helvetica;
+  }
+
+  .app-container {
+    min-height: 100vh;
   }
 
   .main-container {

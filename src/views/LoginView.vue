@@ -1,5 +1,5 @@
 <template>
-  <Login />
+  <Login/>
 </template>
 
 <script>
@@ -13,5 +13,4 @@
 </script>
 
 <style scoped>
-
 </style>
