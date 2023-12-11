@@ -1,33 +1,49 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+
+import HomeView from '../views/HomeView.vue';
+import RequestsView from '../views/RequestsView.vue';
+import LoginView from '../views/LoginView.vue';
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView
+    component: HomeView,
+    meta: { requiresAuth: true }
   },
   {
     path: '/pedidos',
     name: 'pedidos',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "pedidos" */ '../views/PedidosView.vue')
+    component: RequestsView,
+    meta: { requiresAuth: true }
   },
   {
     path: '/login',
     name: 'login',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "login" */ '../views/LoginView.vue')
+    component: LoginView,
   }
 ]
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
-})
+});
 
-export default router
+// Guardiões de rota global beforeEach
+router.beforeEach((to, from, next) => {
+  const auth = getAuth();
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+
+  onAuthStateChanged(auth, (user) => {
+    if (requiresAuth && !user) {
+      next({ name: 'login' }); 
+    } else if (requiresAuth && user) {
+      next(); 
+    } else {
+      next(); 
+    }
+  });
+});
+
+export default router;

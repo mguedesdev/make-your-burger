@@ -60,7 +60,7 @@
   background-color: #ffffff;
   border-radius: 15px;
   width: 400px;
-  height: 600px;
+  height: fit-content;
   margin: 0 auto;
   box-shadow: #1111115a 0 0 10px;
 }
@@ -107,7 +107,7 @@
   display: flex;
   justify-content: flex-end;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .login-btns > button {
@@ -127,6 +127,10 @@
 .login-btns > .selected-btn {
   border-bottom: #fcba03 solid 1px;
   color: #fcba03;
+}
+
+.message-container {
+  margin: 0;
 }
 
 </style>

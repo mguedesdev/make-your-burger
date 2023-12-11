@@ -1,7 +1,7 @@
 <template>
 
   <div id="burger-table" v-if="burgers.length > 0">
-    <Messagem v-model:msg.sync="msg" v-show="msg" />
+    <Message v-model:msg.sync="msg" v-show="msg" />
     <h2>Pedidos:</h2>
     <div>
       <div id="burger-table-heading">
@@ -52,9 +52,10 @@
   deleteDoc
 } from 'firebase/firestore';
 
-  import Messagem from '../Message.vue';
+  import Message from '../Message.vue';
+
   export default {
-  name: 'PedidosView',
+  name: 'Dashboard',
   data() {
     return {
       burgers: [],
@@ -64,7 +65,7 @@
     }
   },
   components: {
-    Messagem,
+    Message,
   },
   methods: {
     async getPedidos() {

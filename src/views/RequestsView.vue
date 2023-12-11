@@ -1,16 +1,16 @@
 <template>
   <div class="main-container">
-    <DashboardVue />
+    <Dashboard />
 
   </div>
 </template>
 
 <script>
-  import DashboardVue from "@/components/Pedidos/Dashboard.vue";
+  import Dashboard from '@/components/Requests/Dashboard.vue';
   export default {
-    name: 'PedidosView',
+    name: 'RequestsView',
     components: {
-      DashboardVue
+      Dashboard,
     }
   }
 </script>

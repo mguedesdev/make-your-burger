@@ -60,7 +60,7 @@
   h1 {
     text-align: center;
     font-size: 42px;
-    margin-bottom: 30px;
+    margin-bottom: 15px;
     color: #222;
   }
 
