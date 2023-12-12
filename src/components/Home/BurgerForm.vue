@@ -39,16 +39,24 @@
 <script>
   import Messagem from '../Message.vue';
 
-  import { db } from '@/firebase'; // Ajuste o caminho para a sua instância do Firestore
-  import { collection, getDocs, addDoc } from 'firebase/firestore';
+  import { mapState, mapActions } from 'vuex';
 
   export default {
     name: 'BurgerForm',
+    components: {
+      Messagem,
+    },  
+    computed: {
+      ...mapState({
+        carnes: state => state.ingredientes.carnes,
+        paes: state => state.ingredientes.paes,
+        opcionaisdata: state => state.ingredientes.opcionais,
+        
+      })
+    },
+    
     data() {
       return {
-        paes: null,
-        carnes: null,
-        opcionaisdata: null,
         nome: '',
         pao: '',
         carne: '',
@@ -56,49 +64,28 @@
         msg: ''
       }
     },
-    components: {
-      Messagem,
-    },  
+    
     methods: {
+      ...mapActions(['buscarIngredientes', 'criarPedido']),
 
       async buscarTodosOsIngredientes() {
-        const categorias = ['carnes', 'paes', 'opcionais'];
-
-        for (const categoria of categorias) {
-          const tiposRef = collection(db, `ingredientes/${categoria}/tipos`);
-          const tiposSnapshot = await getDocs(tiposRef);
-
-          const tipos = tiposSnapshot.docs.map(doc => (doc.data()));
-
-          if (categoria === 'carnes') {
-            this.carnes = tipos;
-          } else if (categoria === 'paes') {
-            this.paes = tipos;
-          } else if (categoria === 'opcionais') {
-            this.opcionaisdata = tipos;
-          }
-        }
+        await this.buscarIngredientes();
       },
 
       async createBurger(e) {
         e.preventDefault();
-        const burgersCollectionRef = collection(db, "burgers"); // Referência à coleção de burgers no Firestore
-        const burgersList = await getDocs(burgersCollectionRef); // Busca todos os documentos da coleção burgers
-        const burgers = burgersList.docs.map(doc => doc.data()); // Mapeia os documentos para um array de objetos
-        console.log(burgers);
-
-        const burgerData = {
-          id: burgers.length + 1,
+          const burgerData = {
           nome: this.nome,
           pao: this.pao,
           carne: this.carne,
           opcionais: this.opcionais,
           status: 'solicitado'
         };
+
         console.log(burgerData);
 
         try {
-          const docRef = await addDoc(burgersCollectionRef, burgerData);
+          await this.criarPedido(burgerData);
           this.msg = `Pedido realizado com sucesso!`;
           this.nome = '';
           this.pao = '';
