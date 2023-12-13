@@ -2,9 +2,13 @@
 <template>
   <div>
     <nav>
-      <router-link to="/" id="logo-url"> <img :src="logo" :alt="alt" ></router-link> 
-      <router-link to="/">Home</router-link> 
-      <router-link to="/pedidos">Pedidos</router-link>
+      <div class="logoAndUser"> 
+        <router-link to="/" id="logo-url"> <img :src="logo" :alt="alt" ></router-link> 
+        <p>Olá {{nameUser}}</p>
+      </div>
+      <router-link class="optionsNav" to="/">Home</router-link> 
+      <router-link class="optionsNav" to="/pedidos">Pedidos</router-link>
+      <button class="btn-sair optionsNav">Sair</button>
     </nav>
   </div>
   
@@ -13,7 +17,13 @@
 <script>
   export default {
     name: 'Navbar',
-    props:  ['logo', 'alt']
+    props:  ['logo', 'alt'],
+    
+    data() {
+      return {
+        nameUser : 'Matheus'
+      }
+    }
   }
 </script>
 
@@ -28,9 +38,32 @@
     align-items: center;
   }
 
-  #logo-url {
+  .logoAndUser {
+    display: flex;
+    align-items: center;
+    justify-content: center; 
     margin: auto;
     margin-left: 0;
+  }
+
+  .logoAndUser p {
+    color: #FCBA03;
+    font-weight: bold;
+    margin-left: 10px;
+  }
+  .optionsNav{
+    color: #FCBA03;
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+    margin-left: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    margin: 0 10px;
+    transition: 0.3s;
+  }
+  .optionsNav:hover {
+    color: #fff;
   }
 
   #logo-url > img {
@@ -38,15 +71,5 @@
     height: 40px;
   }
 
-  nav a {
-    color: #FCBA03;
-    text-decoration: none;
-    margin: 0 10px;
-    transition: 0.3s;
-  }
-
-  nav a:hover {
-    color: #fff;
-  }
 
 </style>

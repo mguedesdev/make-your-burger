@@ -43,24 +43,21 @@
 </template>
 
 <script>
-  import { db } from '@/firebase'; 
-  import {
-  collection,
-  getDocs,
-  doc,
-  updateDoc,
-  deleteDoc
-} from 'firebase/firestore';
-
   import Message from '../Message.vue';
+  import { mapState, mapActions } from 'vuex';
 
   export default {
   name: 'Dashboard',
+  computed: {
+    ...mapState({
+      burgers: state => state.pedidos,
+      status: state => state.status,
+
+    })
+  },
   data() {
     return {
-      burgers: [],
       burger_id: null,
-      status: [],
       msg: ''
     }
   },
@@ -68,45 +65,30 @@
     Message,
   },
   methods: {
+    ...mapActions(['buscarPedidos', 'buscarStatus', 'atualizarStatus', 'deletarPedido']),
     async getPedidos() {
-      const burgersCollectionRef = collection(db, "burgers");
-      const burgersList = await getDocs(burgersCollectionRef);
-      this.burgers = burgersList.docs.map(doc => {
-        return {
-          firestoreId: doc.id, // Armazenar o ID do documento do Firestore
-          ...doc.data() // Obter os dados do documento
-        };
-      });
-      console.log(this.burgers.length);
+      await this.buscarPedidos();
     },
 
     async getStatus() {
-      const statusCollectionRef = collection(db, "status");
-      const statusList = await getDocs(statusCollectionRef);
-      this.status = statusList.docs.map(doc => doc.data());
+      await this.buscarStatus();
     },
 
     async updateBurger(event, firestoreId) {
       const newStatus = event.target.value;
-      const burgerRef = doc(db, "burgers", firestoreId);
 
       try {
-        await updateDoc(burgerRef, {
-          status: newStatus 
-        });
+        await this.atualizarStatus({firestoreId, newStatus});
         this.getPedidos(); 
         this.msg = `Pedido está ${newStatus}`; 
       } catch (error) {
-        console.error("Erro ao atualizar o pedido: ", error);
         this.msg = "Erro ao atualizar pedido. Tente novamente.";
       }
     },
 
     async deleteBurger(firestoreId) {
-      const burgerRef = doc(db, "burgers", firestoreId); 
-
       try {
-        await deleteDoc(burgerRef);
+        await this.deletarPedido(firestoreId);
         this.getPedidos(); 
         this.msg = `Pedido cancelado com sucesso!`; 
       } catch (error) {

@@ -22,10 +22,12 @@
 </template>
 
 <script>
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { useRouter } from "vue-router";
-import { ref } from 'vue'; // Import ref from 'vue'
 import Messagem from '../Message.vue';
+
+import { ref } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+
 
 export default {
   name: 'FormLogin',
@@ -35,14 +37,14 @@ export default {
   setup() {
     const msg = ref(''); 
     const router = useRouter();
+    const store = useStore();
 
     const login = async (event) => {
       const email = event.target.email.value;
       const password = event.target.password.value;
 
       try {
-        const auth = getAuth();
-        await signInWithEmailAndPassword(auth, email, password);
+        await store.dispatch('loginUser', { email, password });
         msg.value = 'Login realizado com sucesso!';
         setTimeout(() => {
           router.push({ name: 'home' });

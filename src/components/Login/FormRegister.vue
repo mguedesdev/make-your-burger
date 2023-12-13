@@ -6,7 +6,7 @@
         <p>Informe seus dados para cadastrar sua conta.</p>
     </div>
 
-    <form class="register-form" v-on:submit.prevent="createUser()">
+    <form class="register-form" v-on:submit.prevent="registerUser()">
       <div class="input-form">
         <label for="name">Nome</label>
         <input type="text" id="name" name="name" v-model="name" placeholder="Digite o seu Nome"/>
@@ -30,14 +30,18 @@
 </template>
 
 <script>
-  import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
   import Messagem from '../Message.vue';
-  import { getFirestore, doc, setDoc } from "firebase/firestore";
+  import { mapState, mapActions } from 'vuex';
+
 
   export default {
   name: 'FormRegister',
   components: {
    Messagem,
+  },
+  computed: {
+    ...mapState({
+    })
   },
   data() {
     return { 
@@ -49,24 +53,15 @@
     }
   },
   methods: {
-    async createUser(e) {
+    ...mapActions(['createUser']),
+    async registerUser(e) {
       if (this.password !== this.passwordRepeat) {
         this.msg = 'As senhas não coincidem.';
         return;
       }
 
-      const auth = getAuth();
-      const db = getFirestore();
-
       try {
-        const userCredential = await createUserWithEmailAndPassword(auth, this.email, this.password);
-        const user = userCredential.user;
-
-        await setDoc(doc(db, "users", user.uid), {
-          name: this.name,
-          email: this.email
-        });
-
+        await this.createUser({email: this.email, password: this.password, name: this.name});
         this.msg = `Usuário criado com sucesso!`;
         this.email = '';
         this.password = '';
