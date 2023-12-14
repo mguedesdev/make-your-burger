@@ -22,6 +22,11 @@ const routes = [
     path: '/login',
     name: 'login',
     component: LoginView,
+  },
+  //qualquer outra rota leva para o /
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/'
   }
 ]
 

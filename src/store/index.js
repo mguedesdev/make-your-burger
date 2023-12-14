@@ -1,7 +1,7 @@
 import { createStore } from 'vuex';
 import { db } from '@/firebase';
-import { collection, getDocs, addDoc, updateDoc, doc, deleteDoc, getFirestore, setDoc } from 'firebase/firestore';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { collection, getDocs, addDoc, updateDoc, doc, deleteDoc, getFirestore, setDoc, getDoc } from 'firebase/firestore';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 const store = createStore({
   state: {
@@ -12,6 +12,7 @@ const store = createStore({
     },
     pedidos: [],
     status: [],
+    user: null,
   },
   mutations: {
     SET_INGREDIENTES(state, payload) {
@@ -23,6 +24,9 @@ const store = createStore({
     SET_STATUS(state, status) {
       state.status = status;
     },  
+    SET_USER(state, userData) {
+      state.user = userData;
+    }
 
   },
   actions: {
@@ -109,16 +113,38 @@ const store = createStore({
       }
     },
 
-    async loginUser (_, {email, password}) {
+    async loginUser ({commit}, {email, password}) {
       const auth = getAuth();
+      const db = getFirestore();
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-        console.log(user);
+       // Busca as informações adicionais do usuário no Firestore
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        console.log(userDoc);
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          localStorage.setItem('user', JSON.stringify(userData));
+          commit('SET_USER', { name: userData.name, email: user.email, uid: user.uid });
+        } else {
+          console.log("Nenhum documento encontrado para o usuário.");
+        }
+        console.log(this.state.user);
       } catch (error) {
         console.error("Erro ao logar usuário: ", error);
       }
-    }
+    },
+    async logoutUser ({commit}) {
+      const auth = getAuth();
+      try {
+        await signOut(auth);
+        localStorage.removeItem('user');
+        console.log(localStorage.getItem('user'));
+        commit('SET_USER', null);
+      } catch (error) {
+        console.error("Erro ao deslogar usuário: ", error);
+      }
+    },
     
   },
 

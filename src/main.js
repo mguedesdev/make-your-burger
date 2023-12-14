@@ -4,6 +4,12 @@ import router from './router'
 import store from './store';
 
 const app = createApp(App);
+
+const userData = JSON.parse(localStorage.getItem('user'));
+if (userData) {
+  store.commit('SET_USER', userData);
+}
+
 app.use(router);
 app.use(store);
 app.mount('#app');

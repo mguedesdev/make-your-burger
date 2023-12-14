@@ -4,24 +4,37 @@
     <nav>
       <div class="logoAndUser"> 
         <router-link to="/" id="logo-url"> <img :src="logo" :alt="alt" ></router-link> 
-        <p>Olá {{nameUser}}</p>
+        <p>Olá {{userName}}</p>
       </div>
       <router-link class="optionsNav" to="/">Home</router-link> 
       <router-link class="optionsNav" to="/pedidos">Pedidos</router-link>
-      <button class="btn-sair optionsNav">Sair</button>
+      <button class="btn-sair optionsNav" v-on:click="logout">Sair</button>
     </nav>
   </div>
   
 </template>
 
 <script>
+  import { mapActions, mapState } from 'vuex';
+
   export default {
     name: 'Navbar',
-    props:  ['logo', 'alt'],
-    
-    data() {
-      return {
-        nameUser : 'Matheus'
+    props: ['logo', 'alt'],
+    computed: {
+      ...mapState({
+        user: state => state.user
+      }),
+      userName() {
+        console.log(this.user);
+        return this.user ? this.user.name : 'Visitante';
+      }
+    },
+    methods: {
+      ...mapActions(['logoutUser']),
+      logout() {
+        this.logoutUser().then(() => {
+          this.$router.push({ name: 'login' }); 
+        });
       }
     }
   }
