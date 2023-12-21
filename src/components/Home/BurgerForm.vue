@@ -82,8 +82,6 @@
           status: 'Solicitado'
         };
 
-        console.log(burgerData);
-
         try {
           await this.criarPedido(burgerData);
           this.msg = `Pedido realizado com sucesso!`;

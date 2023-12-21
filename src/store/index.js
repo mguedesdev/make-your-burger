@@ -1,7 +1,9 @@
 import { createStore } from 'vuex';
 import { db } from '@/firebase';
-import { collection, getDocs, addDoc, updateDoc, doc, deleteDoc, getFirestore, setDoc, getDoc, query, where } from 'firebase/firestore';
+import { collection, getDocs, addDoc, updateDoc, doc, deleteDoc, getFirestore, setDoc, getDoc, query, where, orderBy, Timestamp } from 'firebase/firestore';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 const store = createStore({
   state: {
@@ -41,7 +43,6 @@ const store = createStore({
     },
 
     async criarPedido({state}, pedido) {
-      console.log("Estado do usuário atual:", state.user); // Debug
       if (!state.user || !state.user.uid) {
         throw new Error("Usuário não está logado ou UID não disponível.");
       }
@@ -51,7 +52,8 @@ const store = createStore({
         await addDoc(burgersCollectionRef, {
           ...pedido, 
           userId: state.user.uid,
-          id: burgersList.docs.map(doc => doc.data()).length + 1
+          id: burgersList.docs.map(doc => doc.data()).length + 1,
+          createdAt: Timestamp.now(),
         });
       } catch (error) {
         console.error("Erro ao criar o pedido: ", error);
@@ -67,12 +69,24 @@ const store = createStore({
 
       const uid = state.user.uid;
       const burgersCollectionRef = collection(db, "burgers");
-      const q = query(burgersCollectionRef, where("userId", "==", uid)); // Filtrar por userId
+      const q = query(burgersCollectionRef, where("userId", "==", uid), orderBy("id"));
+
       const querySnapshot = await getDocs(q);
+
       commit('SET_PEDIDOS', querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        let formattedDate = '';
+
+        console.log("Data original do Firestore:", data.createdAt);
+
+        formattedDate = format(data.createdAt.toDate(), 'dd/MM HH:mm', { locale: ptBR });
+
+        console.log("Data formatada:", formattedDate);
+
         return {
           firestoreId: doc.id, 
-          ...doc.data() 
+          formattedDate: formattedDate,
+          ...data
         };
       }));
       console.log(this.state.pedidos);

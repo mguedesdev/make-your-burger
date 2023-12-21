@@ -7,6 +7,7 @@
       <div id="burger-table-heading">
         <div class="order-id">#:</div>
         <div>Cliente:</div>
+        <div class="order-date">Data:</div>
         <div>Pão:</div>
         <div>Carne:</div>
         <div>Opcionais:</div>
@@ -17,6 +18,7 @@
       <div class="burger-table-row" v-for="burger in burgers" :key="burger.id">
         <div class="order-number">{{ burger.id }}</div>
         <div>{{ burger.nome }}</div>
+        <div class="order-date-burger">{{ burger.formattedDate }}</div>
         <div>{{ burger.pao }}</div>
         <div>{{ burger.carne }}</div>
         <div>
@@ -26,7 +28,7 @@
             </li>
           </ul>
         </div>
-        <div>
+        <div class="options-burger">
           <select name="status" class="status" @change="updateBurger($event, burger.firestoreId)">
             <option v-for="s in status" :key="s.id" :value="s.Tipo" :selected="burger.status == s.Tipo">
               {{ s.Tipo }}
@@ -138,8 +140,8 @@
     width: 19%;
   }
 
-  #burger-table-heading .order-id,
-  .burger-table-row .order-number {
+  #burger-table-heading .order-id, #burger-table-heading .order-date,
+  .burger-table-row .order-number,  .burger-table-row .order-date-burger{
     width: 5%;
   }
 
