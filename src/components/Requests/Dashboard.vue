@@ -78,8 +78,9 @@
       const newStatus = event.target.value;
 
       try {
-        await this.atualizarStatus({firestoreId, newStatus});
         this.getPedidos(); 
+        await this.atualizarStatus({firestoreId, newStatus});
+
         this.msg = `Pedido está ${newStatus}`; 
       } catch (error) {
         this.msg = "Erro ao atualizar pedido. Tente novamente.";
@@ -99,8 +100,8 @@
     
   },
   mounted() {
-    this.getPedidos();
     this.getStatus();
+    this.getPedidos();
   }
 
   

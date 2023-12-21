@@ -79,7 +79,7 @@
           pao: this.pao,
           carne: this.carne,
           opcionais: this.opcionais,
-          status: 'solicitado'
+          status: 'Solicitado'
         };
 
         console.log(burgerData);

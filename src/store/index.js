@@ -1,6 +1,6 @@
 import { createStore } from 'vuex';
 import { db } from '@/firebase';
-import { collection, getDocs, addDoc, updateDoc, doc, deleteDoc, getFirestore, setDoc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, updateDoc, doc, deleteDoc, getFirestore, setDoc, getDoc, query, where } from 'firebase/firestore';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 const store = createStore({
@@ -59,7 +59,27 @@ const store = createStore({
       }
     },
 
-    async buscarPedidos({ commit }) {
+    async buscarPedidos({ state, commit }) {
+      if (!state.user || !state.user.uid) {
+        console.error("Usuário não está logado.");
+        return;
+      }
+
+      const uid = state.user.uid;
+      const burgersCollectionRef = collection(db, "burgers");
+      const q = query(burgersCollectionRef, where("userId", "==", uid)); // Filtrar por userId
+      const querySnapshot = await getDocs(q);
+      commit('SET_PEDIDOS', querySnapshot.docs.map(doc => {
+        return {
+          firestoreId: doc.id, 
+          ...doc.data() 
+        };
+      }));
+      console.log(this.state.pedidos);
+      
+    },
+
+    async buscarTodosPedidos({ commit }) {
       const burgersCollectionRef = collection(db, "burgers");
       const burgersList = await getDocs(burgersCollectionRef);
       commit('SET_PEDIDOS', burgersList.docs.map(doc => {
@@ -82,7 +102,6 @@ const store = createStore({
       console.log(firestoreId, newStatus);
       const burgerRef = doc(db, "burgers", firestoreId);
 
-      console.log(burgerRef)
       try {
         await updateDoc(burgerRef,{
           status: newStatus
