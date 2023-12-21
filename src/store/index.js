@@ -40,16 +40,22 @@ const store = createStore({
       }
     },
 
-    async criarPedido(_, pedido) {
+    async criarPedido({state}, pedido) {
+      console.log("Estado do usuário atual:", state.user); // Debug
+      if (!state.user || !state.user.uid) {
+        throw new Error("Usuário não está logado ou UID não disponível.");
+      }
       const burgersCollectionRef = collection(db, "burgers");
       const burgersList = await getDocs(burgersCollectionRef);
       try {
         await addDoc(burgersCollectionRef, {
           ...pedido, 
+          userId: state.user.uid,
           id: burgersList.docs.map(doc => doc.data()).length + 1
         });
       } catch (error) {
         console.error("Erro ao criar o pedido: ", error);
+        throw error; 
       }
     },
 
@@ -115,17 +121,17 @@ const store = createStore({
 
     async loginUser ({commit}, {email, password}) {
       const auth = getAuth();
-      const db = getFirestore();
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
        // Busca as informações adicionais do usuário no Firestore
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        console.log(userDoc);
+        const userDoc = await getDoc(doc(getFirestore(), "users", user.uid));
         if (userDoc.exists()) {
           const userData = userDoc.data();
-          localStorage.setItem('user', JSON.stringify(userData));
-          commit('SET_USER', { name: userData.name, email: user.email, uid: user.uid });
+          console.log("Document data:", userData);
+          const userInfo = { name: userData.name, email: user.email, uid: user.uid };
+          localStorage.setItem('user', JSON.stringify(userInfo));
+          commit('SET_USER', userInfo);
         } else {
           console.log("Nenhum documento encontrado para o usuário.");
         }
@@ -134,6 +140,7 @@ const store = createStore({
         console.error("Erro ao logar usuário: ", error);
       }
     },
+
     async logoutUser ({commit}) {
       const auth = getAuth();
       try {
@@ -145,7 +152,6 @@ const store = createStore({
         console.error("Erro ao deslogar usuário: ", error);
       }
     },
-    
   },
 
 });

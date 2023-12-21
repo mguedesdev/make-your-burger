@@ -6,7 +6,7 @@ import store from './store';
 const app = createApp(App);
 
 const userData = JSON.parse(localStorage.getItem('user'));
-if (userData) {
+if (userData && userData.uid) {
   store.commit('SET_USER', userData);
 }
 

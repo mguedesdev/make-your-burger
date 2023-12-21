@@ -94,7 +94,7 @@
 
         } catch (error) {
           console.error("Erro ao criar o pedido: ", error);
-          this.msg = "Erro ao realizar pedido. Tente novamente.";
+          this.msg = error.message || "Erro ao realizar pedido. Tente novamente.";
         }
       },
     },
